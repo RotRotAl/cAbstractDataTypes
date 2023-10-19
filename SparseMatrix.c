@@ -1,17 +1,20 @@
 #include "SparseMatrix.h"
 
-SparseMatrix* FindAboveSparseMatrix(int row, int col,SparseMatrix* node)
+SparseMatrix* FindAboveSparseMatrix(int row, int col, SparseMatrix* node)
 {
 	SparseMatrix* current = node->nextRow;
 	while (current->col != col && current != node)
 	{
 		current = current->nextRow;
 	}
-	assert(current->col == col);
-	if (current->row != current->nextRow->row)
-		while (current->row != row && current != node)
-		{
-			current = current->nextCol;
+	if (current->col == col)
+		if (current->row != current->nextRow->row)
+			while (current->row != row && current != node)
+			{
+				current = current->nextCol;
+			}
+		else {
+			current == NULL;
 		}
 	return  current;
 }
@@ -23,12 +26,16 @@ SparseMatrix* FindBeforeSparseMatrix(int row, int col,SparseMatrix* node)
 	{
 		current = current->nextCol;
 	}
-	assert(current->row == row);
+	if(current->row == row);
 	if (current->col != current->nextCol->col)
 		while (current->col != col && current != node)
 		{
 			current = current->nextRow;
 		}
+	else
+	{
+		current = NULL;
+	}
 	return  current;
 }
 
@@ -39,14 +46,15 @@ void InsertAfterSparseMatrix(int row, int col, SparseMatrix* node, void* value)
 	SparseMatrix* above = FindAboveSparseMatrix(row, col, node);
 	SparseMatrix* before = find_before_sparse_matrix(row, col, node);
 	SparseMatrix* newNode = (SparseMatrix*)malloc(sizeof(SparseMatrix));
-	assert(above, before, isValid);
-	newNode->info = value;
-	newNode->row = row;
-	newNode->col = col;
-	newNode->nextRow = above->nextRow;
-	newNode->nextCol = before->nextCol;
-	before->nextRow = newNode;
-	above->nextCol = newNode;
+	if (above && before && isValid) {
+		newNode->info = value;
+		newNode->row = row;
+		newNode->col = col;
+		newNode->nextRow = above->nextRow;
+		newNode->nextCol = before->nextCol;
+		before->nextRow = newNode;
+		above->nextCol = newNode;
+	}
 }
 
 BOOL IsEmptyCellSparseMatrix(int row, int col, SparseMatrix* node)
@@ -60,61 +68,63 @@ void DeleteAfterSparseMatrix(int row, int col, SparseMatrix* node)
 	SparseMatrix* above = FindAboveSparseMatrix(row, col, node);
 	SparseMatrix* before = FindBeforeSparseMatrix(row, col, node);
 	SparseMatrix* toDelete = before->nextCol;
-	assert(above, before, isValid);
-	before->nextCol = toDelete->nextCol;
-	above->nextRow = toDelete->nextRow;
-	free(toDelete);
+	if (above && before && isValid) {
+		before->nextCol = toDelete->nextCol;
+		above->nextRow = toDelete->nextRow;
+		free(toDelete);
+	}
 }
 
 void InitSparseMatrix(int row, int col, SparseMatrix** manger)
 {
-	assert(row > 1 && col > 1);
-	int count;
-	SparseMatrix* current;
-	SparseMatrix* next;
-	SparseMatrix* RowAndColManger = (SparseMatrix*)malloc(sizeof(SparseMatrix));
-	*manger = RowAndColManger;
-	RowAndColManger->info = '\0';
-	RowAndColManger->col = 0;
-	RowAndColManger->row = 0;
+	if (row > 1 && col > 1) {
+		int count;
+		SparseMatrix* current;
+		SparseMatrix* next;
+		SparseMatrix* RowAndColManger = (SparseMatrix*)malloc(sizeof(SparseMatrix));
+		*manger = RowAndColManger;
+		RowAndColManger->info = '\0';
+		RowAndColManger->col = 0;
+		RowAndColManger->row = 0;
 
-	RowAndColManger->nextCol = (SparseMatrix*)malloc(sizeof(SparseMatrix));
-	(RowAndColManger->nextCol)->col = 0;
-	(RowAndColManger->nextCol)->row = 1;
-	(RowAndColManger->nextCol)->info = '\0';
+		RowAndColManger->nextCol = (SparseMatrix*)malloc(sizeof(SparseMatrix));
+		(RowAndColManger->nextCol)->col = 0;
+		(RowAndColManger->nextCol)->row = 1;
+		(RowAndColManger->nextCol)->info = '\0';
 
-	RowAndColManger->nextRow = (SparseMatrix*)malloc(sizeof(SparseMatrix));
-	(RowAndColManger->nextRow)->col = 1;
-	(RowAndColManger->nextRow)->row = 0;
-	(RowAndColManger->nextRow)->info = '\0';
+		RowAndColManger->nextRow = (SparseMatrix*)malloc(sizeof(SparseMatrix));
+		(RowAndColManger->nextRow)->col = 1;
+		(RowAndColManger->nextRow)->row = 0;
+		(RowAndColManger->nextRow)->info = '\0';
 
-	current = RowAndColManger->nextCol;
-	for (count = 0; count < row - 1; count++)
-	{
-		next = (SparseMatrix*)malloc(sizeof(SparseMatrix));
-		next->info = '\0';
-		next->row = count + 2;
-		next->col = 0;
-		current->nextCol = next;
+		current = RowAndColManger->nextCol;
+		for (count = 0; count < row - 1; count++)
+		{
+			next = (SparseMatrix*)malloc(sizeof(SparseMatrix));
+			next->info = '\0';
+			next->row = count + 2;
+			next->col = 0;
+			current->nextCol = next;
+			current->nextRow = current;
+			current = next;
+		}
+		current->nextCol = RowAndColManger;
 		current->nextRow = current;
-		current = next;
-	}
-	current->nextCol = RowAndColManger;
-	current->nextRow = current;
 
-	current = RowAndColManger->nextRow;
-	for (count = 0; count < col - 1; count++)
-	{
-		next = (SparseMatrix*)malloc(sizeof(SparseMatrix));
-		next->info = '\0';
-		next->col = count + 2;
-		next->row = 0;
-		current->nextRow = next;
+		current = RowAndColManger->nextRow;
+		for (count = 0; count < col - 1; count++)
+		{
+			next = (SparseMatrix*)malloc(sizeof(SparseMatrix));
+			next->info = '\0';
+			next->col = count + 2;
+			next->row = 0;
+			current->nextRow = next;
+			current->nextCol = current;
+			current = next;
+		}
+		current->nextRow = RowAndColManger;
 		current->nextCol = current;
-		current = next;
 	}
-	current->nextRow = RowAndColManger;
-	current->nextCol = current;
 }
 
 BOOL IsEmptySparseMatrix(SparseMatrix* manger)
