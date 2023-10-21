@@ -13,17 +13,17 @@ typedef struct
 {
 	int V;
 	int** ArcMat;
-	Vertic* Vertices;
+	Vertic** Vertices;
 } Graph;
 #endif // !__GRAPH
 
 //join arc between two vertices
-void JoinArc(Graph* g, Vertic a, Vertic b);
+void JoinArc(Graph* , Vertic* , Vertic* );
 //join arc with wight between two vertices
-void JoinWightArc(Graph* g, Vertic a, Vertic b, int wight);
+void JoinWeightArc(Graph* , Vertic* , Vertic* , int );
 //remove arc between two vertices
-void RemoveArc(Graph* g, Vertic a, Vertic b);
+void RemoveArc(Graph* , Vertic*, Vertic*);
 // retrun true if A as an arc for B
-BOOL IsAdjacent(Graph* g, Vertic a, Vertic b);
+BOOL IsAdjacent(Graph*, Vertic*, Vertic*);
 //retrun all the adjacent of a certin vertic
-LinearLinkedListNode* GetAllAdjacent(Graph* g, Vertic a);
+LinearLinkedListNode* GetAllAdjacent(Graph* g, Vertic* a);
