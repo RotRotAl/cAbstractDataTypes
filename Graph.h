@@ -1,9 +1,10 @@
 #pragma once
-#include "stringlibary.h"
+#include "MathLibrary.h"
 #include "LinearLinkedListNode.h"
 #ifndef __Vertic
 #define __Vertic
 typedef struct {
+	int offsetInArr;
 	void* value;
 }Vertic;
 #endif // !__Vertic
@@ -17,9 +18,12 @@ typedef struct
 } Graph;
 #endif // !__GRAPH
 
+
+//Init graph
+void InitGraph(Graph**,void**, int);
 //join arc between two vertices
 void JoinArc(Graph* , Vertic* , Vertic* );
-//join arc with wight between two vertices
+//join arc with weight between two vertices
 void JoinWeightArc(Graph* , Vertic* , Vertic* , int );
 //remove arc between two vertices
 void RemoveArc(Graph* , Vertic*, Vertic*);
